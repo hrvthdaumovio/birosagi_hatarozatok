@@ -1,0 +1,11 @@
+# Adatok és naplók: érzékeny tartalom, nem kerül verziókezelésbe (TERV.md 8. fejezet)
+data/
+logs/
+
+# Próbák gyorsítótárai
+tools/_search_page.html
+tools/_js_*.txt
+
+__pycache__/
+*.pyc
+.venv/

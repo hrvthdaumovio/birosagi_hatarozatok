@@ -1,0 +1,103 @@
+# Idegenrendészeti határozatok gyűjtése – beállítások (TERV.md 3., 6. és 13. fejezet)
+
+[http]
+base_url = "https://eakta.birosag.hu"
+# Kapcsolati e-mail a User-Agentbe (TERV F8). Kérjük kitölteni, pl. "nev@ceg.hu".
+contact = ""
+list_delay_s = [2.0, 3.0]      # listakérések közti szünet (véletlenített)
+doc_delay_s = [3.0, 4.5]       # dokumentumletöltések közti szünet
+timeout_s = 30
+max_retries = 5
+max_consecutive_errors = 10
+
+[adatvedelem]
+# Amíg false, a teljes szövegek letöltése (fetch) nem indul el (TERV 8. fejezet, F9).
+dpo_jovahagyva = false
+
+[harvest]
+kollegium = "közigazgatási"
+nem_hivatkozhato = "igen"      # "igen" = minden határozat, a nem hivatkozhatók is
+page_size = 100
+# Tömbök kódolása a kérésben: "jquery" (KeresoSzavak[]=…, JogszabalyHelyek[0][Mezo]=…)
+# vagy "mvc" (KeresoSzavak=…, JogszabalyHelyek[0].Mezo=…). A `probe` parancs dönti el.
+kodolas = "jquery"
+# Kulcsszavas keresés: "operator" (KeresoSzavak + operátor) vagy "egyszeru" (KeresoSzo).
+kulcsszo_mod = "operator"
+atfedes_napok = 7              # inkrementális frissítés biztonsági ráhagyása
+ev_tol = 1990                  # évenkénti bontás alsó határa (10 000-es plafon esetén)
+
+# ---------------------------------------------------------------------------
+# Forrásszeletek (TERV 3.1). tipus: cimke | kulcsszo | jogszabaly | szerv
+# ---------------------------------------------------------------------------
+
+[[szelet]]
+nev = "cimke_harmadik_orszagbeli"
+tipus = "cimke"
+ertek = "Idegenrendészet, menekültügy és állampolgársági ügyek/Harmadik országbeli állampolgárok beutazása és tartózkodása"
+leiras = "Mag: harmadik országbeli állampolgárok beutazása és tartózkodása"
+
+[[szelet]]
+nev = "cimke_fo"
+tipus = "cimke"
+ertek = "Idegenrendészet, menekültügy és állampolgársági ügyek"
+leiras = "Főcímke alcímke nélkül – vegyes, hatókör-szűrés kell"
+
+[[szelet]]
+nev = "jsz_harmtv"
+tipus = "jogszabaly"
+ertek = "0facc161-05be-4172-9b3f-18d05fc61897"
+leiras = "2007. évi II. törvény (Harmtv.)"
+
+[[szelet]]
+nev = "jsz_szmtv"
+tipus = "jogszabaly"
+ertek = "a97f27e0-461b-4420-8c9d-a94dfd6beead"
+leiras = "2007. évi I. törvény (Szmtv.)"
+
+[[szelet]]
+nev = "kw_2023_xc_tv"
+tipus = "kulcsszo"
+ertek = "2023. évi XC. törvény"
+leiras = "Új idegenrendészeti törvény (2024-től)"
+
+[[szelet]]
+nev = "kw_idegenrendeszeti_orizet"
+tipus = "kulcsszo"
+ertek = "idegenrendészeti őrizet"
+
+[[szelet]]
+nev = "kw_beutazasi_tilalom"
+tipus = "kulcsszo"
+ertek = "beutazási és tartózkodási tilalom"
+
+[[szelet]]
+nev = "kw_tartozkodasi_engedely"
+tipus = "kulcsszo"
+ertek = "tartózkodási engedély"
+
+[[szelet]]
+nev = "kw_letelepedesi_engedely"
+tipus = "kulcsszo"
+ertek = "letelepedési engedély"
+
+[[szelet]]
+nev = "kw_vendegmunkas"
+tipus = "kulcsszo"
+ertek = "vendégmunkás-tartózkodási engedély"
+
+[[szelet]]
+nev = "kw_kiutasitas"
+tipus = "kulcsszo"
+ertek = "kiutasítás"
+
+[[szelet]]
+nev = "kw_oif"
+tipus = "kulcsszo"
+ertek = "Országos Idegenrendészeti Főigazgatóság"
+leiras = "Zajos: az OIF menekültügyben is eljárt"
+
+[[szelet]]
+nev = "kw_bah"
+tipus = "kulcsszo"
+ertek = "Bevándorlási és Állampolgársági Hivatal"
+leiras = "Zajos: a BÁH menekült- és állampolgársági ügyben is eljárt"

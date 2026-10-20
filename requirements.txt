@@ -1,0 +1,3 @@
+requests>=2.31
+openpyxl>=3.1      # M4: Excel-export
+striprtf>=0.0.26   # M2: RTF -> szöveg
