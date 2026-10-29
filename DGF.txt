@@ -1,0 +1,187 @@
+DocGen fejlesztés
+
+Kérlek készíts tervet .md fájlba az alábbiak tekintetében. Vizsgáld át a teljes repót a /ponytali-audit skill-el. A terv készítéséhez is használd a ponytail skill-t, ne készítsünk felesleges kódot. 
+
+A terv elkészítését követően ellenőrizd azt, majd kérem, hogy küldd meg röviden, hogy mit értettél meg a fejlesztési igényekből, és azokat milyen módon tudod kivitelezni.
+
+1. A kimeneti mappa struktúrája megváltozott. Jelenleg a gyökérmappában 5 mappa található (pontos nevek): 
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----     2026. 10. 29.      7:03                00_Altalanos_dokumentumok
+d-----     2026. 10. 29.      7:01                01_Hosszabbitasok
+d-----     2026. 10. 29.      7:02                02_Kiadasok
+d-----     2026. 10. 29.      7:04                03_Bejelentesek
+-a----     2026. 10. 29.      7:30          42012 docgen-cases.json
+-a----     2026. 10. 29.      7:30          51915 docgen-config.json
+-a----     2026. 10. 29.      7:30         430772 docgen-employees.json
+-a----     2026. 10. 29.      7:30          15943 docgen-transfers.json
+
+A generált dokumentumok elhelyezése kapcsán a következő problémát kell áthidalni. Egy kérelem mellékletei vagy a 01_Hosszabbitasok, vagy a 02_Kiadasok mappákba kerülnek. A 01_Hosszabbitasok mappában az engedélyek lejárata alapján vannak további mappák (Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----     2026. 10. 29.      7:01                2026.11
+d-----     2026. 10. 29.      7:01                2026.12
+d-----     2026. 10. 29.      7:01                2027.01)
+
+Illetve ezeken belül található az egyes munkavállalók személyes mappái, melyek elnevezése konzekvensen tisztított "vezetéknév keresztnév" közte szóköz. A lejáratok alapján elkészített, illetve a munkavállalói dir-ek rendszeresen változó mappák, ahogy halad az idő, úgy két dolog történik: a lezárt ügyek átkerülnek a digitális személyi anyagokba (ez a mappa nem lesz hozzáférhető az alkalmazás számára), majd ha kiürült a lejáratok alapján elkészített mappa, akkor azt törlöm.
+
+A 02_Kiadasok mappában nincsenek hónapok szerint létrehozott almappák, ott csak munkavállalói mappák találhatók "vezetéknév keresztnév" elnevezéssel.
+
+A 01_Hosszabbitasok és a 02_Kiadasok mappákra egyaránt igaz, hogy a munkavállalók almappáiban négy mappa szerepel a következők szerint:
+
+    Directory: Z:\23_HARMADIK_ORSZAGBELI_MUNKAVALLALOK\09_OIF_kerelmek\01_Hosszabbitasok\2026.11\John Doe
+
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----     2026. 10. 29.      7:00                01_Elokeszitett
+d-----     2026. 10. 29.      7:00                02_Feltoltheto
+d-----     2026. 10. 29.      7:29                03_Beerkezett
+d-----     2026. 10. 29.      7:30                04_TAJ
+
+A 03_Beerkezett mappába a dolgozó ügyében hozott idegenrendészeti döntések, szálláshely-igazolások és egyéb, a kérelemmel összefüggő pdf-ek kerülnek, kizárólag manuálisan.
+
+A TAJ-al kapcsolatos dokumentumok (pdf sablonok: Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----     2026. 10. 05.      6:35         190048 TAJ-igénylőlap (NYT.53).pdf
+-a----     2026. 10. 05.      6:35         174749 TAJ-meghatalmazás.pdf
+-a----     2026. 10. 05.      5:37         176697 TAJ-megrendelő (NYT.52).pdf)
+
+a munkavállalók mappáiban található 04_TAJ mappákba kell kerüljenek, mivel ezeket a DocGen hozza létre.
+
+
+A 03_Bejelentesek mappába kerülnek a szálláshelyváltozások és a munkaviszony megszűnések
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----     2026. 10. 29.      7:04                01_Munkaviszony_megszunes
+d-----     2026. 10. 29.      7:08                02_Szallashelyvaltozasok
+
+A 01_Munkaviszony_megszunes mappában külön dolgozói almappák nem lesznek, oda közvetlenül mehetnek a "Munkavállalói nyilatkozat foglalkoztatóváltásról.docx" template alapján készült iratok az általános elnevezési szabály alapján.
+
+A 02_Szallashelyvaltozasok mappában szintén évek és hónapok alapján készülnek új almappák, de azokon belül külön munkavállalói mappákat nem hozok létre, oda mehetnek a fájlok közvetlenül.
+
+A cél, hogy a program megtalálja mindig a dolgozót, akár indexelést is fel lehet venni, hogy mindig egyértelműen megtalálja a szkript. Egy munkavállaló egyszerre csak egy mappával rendelkezik, nem fordulhat elő, hogy a 01_Hosszabbitasok és a 02_Kiadasok mappában egyidőben legyenek almappák. 
+
+NAGYON FONTOS: megfelelő helyet kell találni a Backup fájloknak, valamint a docgen-accounts.json, docgen-cases.json, docgen-config.json, docgen-employees.json, docgen-transfers.json fájloknak! Nincs jó helye ezeknek a 09_OIF_kerelmek mappában, helyette a Z:\23_HARMADIK_ORSZAGBELI_MUNKAVALLALOK\08_DocGen\DocGen-main mappába kell elhelyezni őket. A backup-okat, ha nem ide érdemes tenni, akkor javasolj megfelelőbb helyet. 
+
+Kérlek a local és a github-on lévő repóban taláható terv-fájlokat helyezd el egy "plans" mappába, ahogy én a vállalati gépen intéztem a következő szerint: 
+
+    Directory: Z:\23_HARMADIK_ORSZAGBELI_MUNKAVALLALOK\08_DocGen\DocGen-main\plans
+
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----     2026. 09. 29.      4:41          12554 TERV-adatbiztonsag.md
+-a----     2026. 10. 15.      1:17          12621 TERV-dijatutalas.md
+-a----     2026. 09. 07.      2:56          61983 TERV-enterhungary.md
+-a----     2026. 10. 15.      2:37          22334 TERV-esemenyek.md
+-a----     2026. 10. 15.      2:37          32148 TERV-fiokok.md
+-a----     2026. 09. 29.      4:41          11671 TERV-mappaszerkezet.md
+-a----     2026. 10. 05.      6:35          23964 TERV-pdf-nyomtatvany.md
+-a----     2026. 08. 19.      1:28          22951 TERV-szotar.md
+-a----     2026. 08. 18.      3:07           8357 TERV-tesztanyag.md
+-a----     2026. 10. 27.      7:37          20980 TERV-tomeges-ugyintezes.md
+-a----     2026. 08. 18.      3:07          21881 TERV.md
+
+A print.html fájlt nem lehet áthelyezni esetleg a tools mappába? 
+
+2. A DocGen Ügyek/Ügyek funkciójában a szűrési opciók nem elegek, ráadásul a tömeges kérelmeket jelenleg nem lehet kellőképpen kiszűrni. Ezek az opciók vannak: 
+Nyitott 
+Lejárt
+Sürgős
+Azonosító nélkül
+Lezárt
+Mind
+Előkészítés
+Elbírálás alatt
+
+Ki kell egészíteni egy "Tömeges" toggle-el, amely ha bent van, akkor mutatja és fordítva.
+
+Kell egy legürdülő, többválasztós lista az ügyek típusa szerinti bontás érdekében (pl. Szálláshely-változás bejelentés <- javítsd mindenhol, ez valójában egy szó: Szálláshelyváltozás bejelentés, illetve Tartózkodási engedély hosszabbítás, kiadás)
+
+Szeretném, ha az egyes ügyeknél előre meg kellene adni, hogy milyen célú tartózkodási engedély iránti kerül előterjesztésre. Nem kell mind a 23 típust felvinni, a jellemzően intézett ügyek elegendők: Vendégmunkás-tartózkodási engedély, Nemzeti Kártya, EU Kék Kártya, családi együttélés
+
+Az Ügyek/Ügyek funkció Név és ügytípus mezőjében a következő példák szerint jelenjenek meg az ügyek: 
+
+John Doe
+Vendégmunkás-tartózkodási engedély meghosszabbítása
+
+Jane Doe
+Nemzeti Kártya meghosszabbítása
+
+Nomen Nescio
+EU Kék Kártya kiadása
+
+Az Állapot mezőben ne az szerepeljen, hogy "Lezárt", hanem annak a kimenetele: "engedélyezve" - a Megadva terminológiát teljesen írd át "engedélyezve"-re, viszont a szűréseknél maradjon továbbra is a lezárt, hogy minden kimenetelt mutasson.
+
+A státuszok rögzítése nem jó a jelenlegi metodika alapján. Itt egy példa, a probléma, hogy felesleg információkat mutat a program. Egy engedélyező döntést követően teljesen értelmetlen megjeleníteni az ügyintézési határidőt. 
+
+"
+‹ Vissza
+John Doe
+Tartózkodási engedély meghosszabbítása · Lezárva · EH19723XXX · ikt. 106-3-XXX40/2026-T · Lezárva
+‹
+1 / 1
+›
+Idővonal
+Enter Hungary
+Tartózkodási engedély meghosszabbítása
+Lezárva · lezárva: Megadva · iktatószám: 106-3-XXX40/2026-T · EH: EH19723XXX
+Beadva
+Lezárva · a jelenlegi engedély még 398 napig érvényes
+2026. 09. 29.
+beadva
+2026. 12. 14.
+ügyintézési határidő
+2027. 12. 01.
+engedély lejár
+●
+Előkészítés
+javít
+2026. 09. 07.
+52 napja
+Ügy megnyitva · EH: EH19723XXX · helyi
+●
+Beadva
+javít
+2026. 09. 29.
+30 napja
+EH: EH19723XXX · helyi
+●
+Elbírálás alatt
+javít
+2026. 10. 05.
+24 napja
+iktatószám: 106-3-XXX40/2026-T · EH: EH19723XXX · Horváth Dániel
+●
+Lezárva
+javít
+2026. 10. 27.
+2 napja
+utólag rögzítve: 2026. 10. 28.
+Engedélyezés 2027.12.01-ig · Megadva · iktatószám: 106-3-XXX40/2026-T · EH: EH19723XXX · Horváth Dániel
+▲
+Ügyintézési határidő
+számított
+2026. 12. 14.
+46 nap múlva
+OIF érkeztetés napja (iktatószám megkapása): 2026-10-05
+○
+A jelenlegi engedély lejár
+számított
+2027. 12. 01.
+398 nap múlva"
+
+Az engedélyezés rögzítésénél kötelezően meg kell adni az új engedély sorozatszámát. Csakhogy az okmány hetekkel később érkezik meg, a döntésben viszont látható az engedély érvényességi ideje, így azt be lehetne írni, a sorozatszámot azonban nem. 
+
+Az engedélyezést követően nem áll meg a folyamat, nem itt ér véget. 
+További teendők: 
+- A döntéstől számított 5 napon belül be kell jelenteni a munkaviszony megkezdését - erről érdemes tájékoztatni a user-t és esetleg valamilyen kipipálható to-do listát készíteni, amiben szerepel a bejelentés beküldése és ha ezt elvégezte, akkor tudja jelölni, hogy kész.
+- A bejelentéshez kommunikálni kell a back office-al, mert a SAP-ban új személyt kell rögzíteniük és erre ticket-et kell leadni. A ticket-hez kell egy xlsx táblázat is, a csatolt fájl szerint.
+
+Példa: Régi TSz	Név	Új TSZ	Kilépés	Új belépés	Időrögzítési ügyintéző	Felettes 	K2	Új határozott idő lejárta	Dokumentum jellege	Dokumentum száma	Dokumentum dátuma 
+27XXX	John Doe	//ez mindig üres, mert ők fogják generálni	//user tölti manuálisan, vagy a programba felviszünk egy adatmegadási pop-over window-t	//user tölti manuálisan, vagy a programba felviszünk egy adatmegadási pop-over window-t	//ez az adat jelenleg nem szerepel a DB-ben, de fel kell töltenem rövidesen minden dolgozóhoz	//ez az adat jelenleg nem szerepel a DB-ben, de fel kell töltenem rövidesen minden dolgozóhoz	//ez az adat jelenleg nem szerepel a DB-ben, de fel kell töltenem rövidesen minden dolgozóhoz	//engedélyező döntésben szereplő dátum, hogy meddig kapja az engedélyét	// mindig, idézőjelek nélkül: "Határozat"	//iktatószám, amely az ügyben már megvan: 106-3-26440/2026-T	//engedélyező döntés dátuma
+
+- Ha megérkezett az engedély, a sorozatszámát fel kell vinni a programba, ellenőrizni az érvényességi időt és a másolatát elhelyezni a digitális és a fizikai személyi anyagban.
+- Ha megérkezett az engedély, TAJ-hosszabbítást kell intézni.
+
